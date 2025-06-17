@@ -1,0 +1,19 @@
+chat-multiuser/
+│
+├── backend/
+│   ├── main_server.py         # Servidor principal
+│   ├── backup_server.py       # Servidor secundário (replicação)
+│   ├── watchdog.py            # Verifica se o servidor principal tá de pé
+│   ├── broadcast_utils.py     # Funções auxiliares como broadcast(), dicionários, etc
+│   └── static/                # React build aqui
+│       └── index.html
+│
+├── frontend/
+│   ├── public/
+│   ├── src/
+│   │   ├── App.jsx            # Interface do chat
+│   │   └── ...
+│   └── package.json
+│
+├── README.md
+└── relatório.pdf
