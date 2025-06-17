@@ -2,8 +2,6 @@
 import socket, threading
 
 # Lista pra armazenar os clientes conectados
-#clients = []
-#usernames = []
 
 clients = {}
 
@@ -18,11 +16,6 @@ def handle_client(client_socket):
         # Recebe usuário
         username = client_socket.recv(1024).decode('utf-8')
         clients[client_socket] = username
-        
-        # Se não mandou nome, desconecta sem log
-        if not username:
-            client_socket.close()
-            return
         
         print(f"[+] {username} entrou no chat.")
         
@@ -68,16 +61,17 @@ def broadcast(message, sender_socket, sala="geral"):
                 client.close()
 
 # Iniciar o server
-def start_server(host='0.0.0.0', port=4242):
+def start_server(host= '0.0.0.0', port=4243):
     #SOCK_STREAM = TCP e AF_INET = IPv4
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Permite reusar a porta logo após fechar
-
+    
     # Liga o socket ao endereço e porta
     server.bind((host, port))
     server.listen()
-    print(f"🚀 Servidor de chat rodando em {host}:{port}")
+    print(f"🧯 Servidor de BACKUP rodando em {host}:{port}")
+
     
     while True:
         # Aceita conexões
