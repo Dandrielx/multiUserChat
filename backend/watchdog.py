@@ -1,11 +1,9 @@
-import socket
-import subprocess
-import time
-import psutil  # pip install psutil
+import socket, subprocess, time, psutil
 
 MAIN_HOST = 'localhost'
 MAIN_PORT = 4242
 BACKUP_PROCESS = None
+pre_state = None  # pode ser 'ok' ou 'down'
 
 def is_alive(host, port):
     try:
@@ -15,7 +13,7 @@ def is_alive(host, port):
         return False
 
 def kill_process_by_name(name):
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+    for proc in psutil.process_iter(['pid', 'cmdline']):
         cmdline = proc.info.get('cmdline')
         if cmdline and isinstance(cmdline, list):
             if name in ' '.join(cmdline):
@@ -26,14 +24,17 @@ while True:
     principal_online = is_alive(MAIN_HOST, MAIN_PORT)
 
     if principal_online:
-        print("[WATCHDOG] Principal OK.")
+        if pre_state != 'ok':
+            print("[WATCHDOG] Principal voltou!")
+            pre_state = 'ok'
         if BACKUP_PROCESS:
-            print("[WATCHDOG] Principal voltou! Matando o backup.")
             kill_process_by_name("backup_server.py")
             BACKUP_PROCESS = None
     else:
-        print("[WATCHDOG] Principal OFFLINE.")
+        if pre_state != 'down':
+            print("[WATCHDOG] Principal OFFLINE. Subindo backup...")
+            pre_state = 'down'
         if BACKUP_PROCESS is None:
-            print("[WATCHDOG] Subindo backup...")
             BACKUP_PROCESS = subprocess.Popen(["python", "backup_server.py"])
+
     time.sleep(3)

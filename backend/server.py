@@ -17,12 +17,14 @@ def handle_client(client_socket):
     try:
         # Recebe usuário
         username = client_socket.recv(1024).decode('utf-8')
-        clients[client_socket] = username
         
         # Se não mandou nome, desconecta sem log
         if not username:
             client_socket.close()
             return
+        
+        clients[client_socket] = username
+        rooms.setdefault("geral", set()).add(client_socket)  # Adiciona o socket na sala 'geral'
         
         print(f"[+] {username} entrou no chat.")
         
@@ -58,14 +60,14 @@ def handle_client(client_socket):
 
 def broadcast(message, sender_socket, sala="geral"):
     for client in rooms[sala]:
-        if client != sender_socket:
-            try:
-                client.send(message.encode('utf-8'))
-            except:
-                # Remove o cliente bugado
-                username = clients.pop(client, 'desconhecido')
-                print(f"[ERRO AO ENVIAR]: {username}")
-                client.close()
+
+        try:
+            client.send(message.encode('utf-8'))
+        except:
+            # Remove o cliente bugado
+            username = clients.pop(client, 'desconhecido')
+            print(f"[ERRO AO ENVIAR]: {username}")
+            client.close()
 
 # Iniciar o server
 def start_server(host='0.0.0.0', port=4242):
@@ -82,7 +84,7 @@ def start_server(host='0.0.0.0', port=4242):
     while True:
         # Aceita conexões
         client_socket, addr = server.accept()
-        print(f"[+] Nova conexão de {addr}")
+        # print(f"[+] Nova conexão de {addr}")
         
         # Criação de thread para o cliente
         thread = threading.Thread(target=handle_client, args=(client_socket,))
