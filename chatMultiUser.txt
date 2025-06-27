@@ -8,12 +8,23 @@ chat-multiuser/
 │   └── static/                # React build aqui
 │       └── index.html
 │
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── App.jsx            # Interface do chat
-│   │   └── ...
-│   └── package.json
+├── chat-front/
+└── src/
+    ├── components/
+    │   ├── Chat/
+    │   │   ├── Chat.js
+    │   │   └── Chat.css
+    │   ├── MessageList/
+    │   │   ├── MessageList.js
+    │   │   └── MessageList.css
+    │   └── MessageInput/
+    │       ├── MessageInput.js
+    │       └── MessageInput.css
+    ├── services/
+    │   └── websocketService.js
+    ├── App.js
+    ├── App.css
+    └── index.js
 │
 ├── README.md
 └── relatório.pdf

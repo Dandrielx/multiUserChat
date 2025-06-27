@@ -1,0 +1,26 @@
+.message-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+    text-align: center;
+    align-items: center;
+    /* Para ocupar o espaço disponível */
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 5px;
+    padding: 8px 12px;
+    background-color: #f1f0f0;
+    border-radius: 10px;
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+.no-messages {
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+}

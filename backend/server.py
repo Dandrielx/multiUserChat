@@ -24,7 +24,7 @@ def handle_client(client_socket):
             return
         
         clients[client_socket] = username
-        rooms.setdefault("geral", set()).add(client_socket)  # Adiciona o socket na sala 'geral'
+        rooms.setdefault("geral", set()).add(client_socket)  # Adiciona o socket na sala 'geral' como padrão
         
         print(f"[+] {username} entrou no chat.")
         
