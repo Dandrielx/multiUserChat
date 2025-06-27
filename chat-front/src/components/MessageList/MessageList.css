@@ -1,22 +1,67 @@
 .message-list {
     list-style-type: none;
-    padding: 0;
-    margin: 0;
-    overflow-y: auto;
-    flex-grow: 1;
-    text-align: center;
-    align-items: center;
-    /* Para ocupar o espaço disponível */
     padding: 10px;
+    margin: 0;
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
-.message {
-    margin-bottom: 5px;
-    padding: 8px 12px;
-    background-color: #f1f0f0;
-    border-radius: 10px;
-    max-width: 100%;
+/* Um contêiner para cada linha de mensagem, para controlar o alinhamento */
+.message-container {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.message-container.sent {
+    justify-content: flex-end;
+    /* Alinha o balão à direita */
+}
+
+.message-container.received {
+    justify-content: flex-start;
+    /* Alinha o balão à esquerda */
+}
+
+/* O balão da mensagem em si */
+.message-bubble {
+    padding: 8px 14px;
+    border-radius: 18px;
+    max-width: 70%;
     word-wrap: break-word;
+}
+
+.message-sent {
+    background-color: #007bff;
+    /* Azul para enviadas */
+    color: white;
+}
+
+.message-received {
+    background-color: #f1f0f0;
+    /* Cinza para recebidas */
+    color: black;
+}
+
+.sender-name {
+    font-size: 0.8em;
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.message-content {
+    font-size: 1em;
+}
+
+.notification {
+    text-align: center;
+    color: #888;
+    font-style: italic;
+    font-size: 0.9em;
+    margin: 10px 0;
+    width: 100%;
 }
 
 .no-messages {
