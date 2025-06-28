@@ -1,84 +1,140 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import websocketService from '../../services/websocketService';
 import MessageList from '../MessageList/MessageList';
 import MessageInput from '../MessageInput/MessageInput';
+import Sidebar from '../Sidebar/Sidebar';
 import './Chat.css';
 
-// O componente agora recebe o 'username' de quem está logado
-function Chat({ username }) {
-    const [messages, setMessages] = useState([]);
-    const [isConnected, setIsConnected] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+function Chat() {
+    const [messages, setMessages] = useState({});
+    const [users, setUsers] = useState([]);
+    const [activeChat, setActiveChat] = useState('geral');
+    const [privateChats, setPrivateChats] = useState([]);
     const [currentUser, setCurrentUser] = useState('');
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isConnected, setIsConnected] = useState(false);
 
+    // Ele guarda o valor mais recente do currentUser de uma forma que o useEffect pode acessar.
+    const currentUserRef = useRef(currentUser);
     useEffect(() => {
-        // Funçao que recebe a string JSON
+        currentUserRef.current = currentUser;
+    }, [currentUser]);
+
+    // Este useEffect roda APENAS UMA VEZ na vida do componente.
+    useEffect(() => {
         const handleNewMessage = (data) => {
             try {
-                // Transformamos a string de volta em um objeto JavaScript
-                const messageObject = JSON.parse(data);
-                setMessages((prevMessages) => [...prevMessages, messageObject]);
+                const msg = JSON.parse(data);
+
+                if (msg.type === 'user_list') {
+                    setUsers(msg.users);
+                    return;
+                }
+
+                setMessages(prev => {
+                    const newMessages = { ...prev };
+                    let chatKey;
+
+                    if (msg.type === 'public_message') {
+                        chatKey = msg.room;
+                    } else if (msg.type === 'private_message') {
+                        // Acessa o nome de usuário mais recente através da ref.
+                        chatKey = msg.sender === currentUserRef.current ? msg.target : msg.sender;
+                        setPrivateChats(p => (p.includes(chatKey) ? p : [...p, chatKey]));
+                    }
+
+                    if (chatKey) {
+                        if (!newMessages[chatKey]) newMessages[chatKey] = [];
+                        newMessages[chatKey] = [...newMessages[chatKey], msg];
+                    }
+
+                    return newMessages;
+                });
             } catch (error) {
-                // Se a mensagem não for um JSON válido, apenas a exibimos como texto
-                console.error("Erro ao parsear a mensagem JSON:", error);
-                // setMessages((prevMessages) => [...prevMessages, { type: 'raw', content: data }]);
+                console.error("Erro ao processar mensagem:", error);
             }
         };
 
-        // Adiciona o ouvinte de mensagens
         websocketService.addMessageListener(handleNewMessage);
+        websocketService.connect("ws://localhost:3001")
+            .then(() => setIsConnected(true))
+            .catch(err => console.error("Falha na conexão WS:", err));
 
-        // Conectamos e, logo em seguida, enviamos o nome do usuário para o servidor
-        websocketService.connect("ws://localhost:3001", handleNewMessage)
-            .then(() => {
-                // O backend agora espera o nome do usuário como primeira mensagem
-                setIsConnected(true);
-                console.log("Conectado ao servidor. Aguardando nome de usuário...");
-            })
-            .catch(err => {
-                console.error("Falha na conexão com o WebSocket:", err);
-                setIsConnected(false);
-            });
+        // A função de limpeza roda quando o componente é desmontado.
         return () => {
             websocketService.removeMessageListener(handleNewMessage);
         };
-        // Adicionamos 'username' como dependência para reconectar se o usuário mudar
-    }, [username]);
+    }, []);
 
-    const handleSend = (message) => {
+    const handleSendMessage = (message) => {
         if (!isConnected) return;
 
-        // Se ainda não estiver logado, esta mensagem é o nome de usuário.
         if (!isLoggedIn) {
-            setCurrentUser(message); // Define o nome de usuário no estado
+            setCurrentUser(message);
+            setIsLoggedIn(true);
             websocketService.sendMessage(message);
-            setIsLoggedIn(true); // Marca que o login foi feito
-            console.log(`Usuário "${message}" enviado para o servidor.`);
         } else {
-            // Se já estiver logado, envia como uma mensagem de chat normal.
-            websocketService.sendMessage(message);
+            if (message.startsWith('/')) {
+                websocketService.sendMessage(message);
+                if (message.startsWith('/join ')) {
+                    const room = message.split(' ')[1];
+                    setActiveChat(room);
+                } else if (message.startsWith('/priv ')) {
+                    const targetUser = message.split(' ')[1];
+                    if (!privateChats.includes(targetUser)) {
+                        setPrivateChats(p => [...p, targetUser]);
+                    }
+                    setActiveChat(targetUser);
+                }
+            } else {
+                const currentActiveChat = activeChat;
+                if (['geral', 'games', 'estudos'].includes(currentActiveChat)) {
+                    websocketService.sendMessage(message);
+                } else {
+                    websocketService.sendMessage(`/priv ${currentActiveChat} ${message}`);
+                }
+            }
         }
     };
-    if (!isConnected) {
-        return <div>Conectando ao servidor de chat...</div>;
+
+    const publicRooms = ['geral', 'games', 'estudos'];
+
+    const handleSelectChat = (chatName) => {
+        if (publicRooms.includes(chatName) && activeChat !== chatName) {
+            websocketService.sendMessage(`/join ${chatName}`);
+        }
+        setActiveChat(chatName);
     }
 
+    if (!isConnected) return <div>Conectando...</div>;
+
     return (
-        <div className="chat-container">
-            {/* Mostra uma mensagem de boas-vindas se ainda não estiver logado */}
-            {!isLoggedIn && (
-                <div className="welcome-message">
-                    <h2>Bem-vindo!</h2>
-                    <p>Digite seu nome no campo abaixo e pressione Enter para entrar.</p>
-                </div>
-            )}
-            <MessageList messages={messages} currentUser={currentUser} />
-            <MessageInput
-                onSend={handleSend}
-                // Muda o placeholder do input para guiar o usuário
-                placeholder={!isLoggedIn ? "Digite seu nome..." : "Digite sua mensagem..."}
+        <>
+            <Sidebar
+                rooms={publicRooms}
+                users={users}
+                privateChats={privateChats}
+                activeChat={activeChat}
+                setActiveChat={handleSelectChat}
+                currentUser={currentUser}
             />
-        </div>
+            <div className="chat-view">
+                {!isLoggedIn && (
+                    <div className="welcome-message">
+                        <h2>Bem-vindo ao Chat!</h2>
+                        <p>Para começar, digite seu nome de usuário e pressione Enter.</p>
+                    </div>
+                )}
+                <MessageList
+                    messages={messages[activeChat] || []}
+                    currentUser={currentUser}
+                />
+                <MessageInput
+                    onSend={handleSendMessage}
+                    placeholder={!isLoggedIn ? "Digite seu nome..." : `Mensagem em ${activeChat}`}
+                />
+            </div>
+        </>
     );
 }
 

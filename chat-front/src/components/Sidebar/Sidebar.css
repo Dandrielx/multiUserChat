@@ -1,0 +1,63 @@
+.sidebar {
+    width: 240px;
+    background-color: #2f3136;
+    color: #dcddde;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.sidebar-section {
+    margin-bottom: 20px;
+}
+
+.sidebar-section h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #8e9297;
+    padding: 0 10px;
+}
+
+.sidebar-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-section li {
+    padding: 8px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 2px 0;
+}
+
+.sidebar-section li:hover {
+    background-color: #393c43;
+}
+
+.sidebar-section li.active {
+    background-color: #40444b;
+    color: white;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    cursor: default !important;
+}
+
+.user-item:hover {
+    background-color: transparent !important;
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-indicator.online {
+    background-color: #3ba55d;
+}

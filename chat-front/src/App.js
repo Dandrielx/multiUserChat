@@ -1,16 +1,17 @@
 import React from 'react';
-import Chat from './components/Chat/Chat';
+import Chat from './components/Chat/Chat'; // Apenas importa o Chat
 import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Chat dus guri</h1>
+        <h1>Multi-User Chat</h1>
       </header>
-      <main>
+      <div className="App-main-content">
+        {/* Renderiza o componente Chat diretamente, sem props */}
         <Chat />
-      </main>
+      </div>
     </div>
   );
 }
