@@ -16,5 +16,4 @@
   display: flex;
   flex-grow: 1;
   overflow: hidden;
-  /* Importante para o layout de duas colunas */
 }

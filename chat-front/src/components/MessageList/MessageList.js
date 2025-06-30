@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import './MessageList.css';
 
-// Agora recebemos o 'currentUser' para saber quem "somos nós"
+// Recebe o currentUser para saber quem é
 function MessageList({ messages, currentUser }) {
     const messagesEndRef = useRef(null);
 

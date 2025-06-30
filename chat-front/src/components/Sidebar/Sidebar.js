@@ -1,7 +1,7 @@
 import React from 'react';
 import './Sidebar.css';
 
-function Sidebar({ rooms, users, privateChats, activeChat, setActiveChat, currentUser }) {
+function Sidebar({ rooms, users, privateChats, activeChat, setActiveChat, currentUser, onUserSelect }) {
     return (
         <div className="sidebar">
             <div className="sidebar-section">
@@ -28,6 +28,7 @@ function Sidebar({ rooms, users, privateChats, activeChat, setActiveChat, curren
                             className={activeChat === chatName ? 'active' : ''}
                             onClick={() => setActiveChat(chatName)}
                         >
+                            <span className="status-indicator private"></span>
                             {chatName}
                         </li>
                     ))}
@@ -37,15 +38,21 @@ function Sidebar({ rooms, users, privateChats, activeChat, setActiveChat, curren
             <div className="sidebar-section">
                 <h3>Usuários Online</h3>
                 <ul>
-                    {users.map(user => (
-                        <li 
-                            key={user} 
-                            className="user-item"
-                        >
-                            <span className="status-indicator online"></span>
-                            {user} {user === currentUser && '(Você)'}
-                        </li>
-                    ))}
+                    {users.map(user => {
+                        const isYou = user === currentUser;
+                        const isClickable = !isYou;
+
+                        return (
+                            <li
+                                key={user}
+                                className={`user-item ${isClickable ? 'clickable' : ''}`}
+                                onClick={isClickable ? () => onUserSelect(user) : undefined}
+                            >
+                                <span className="status-indicator online"></span>
+                                {user} {isYou && '(Você)'}
+                            </li>
+                        );
+                    })}
                 </ul>
             </div>
         </div>

@@ -106,6 +106,19 @@ function Chat() {
         setActiveChat(chatName);
     }
 
+    const handleSelectUser = (targetUser) => {
+        // Não faz nada se clicar em si mesmo
+        if (targetUser === currentUser) return;
+
+        // Adiciona o usuário à lista de chats privados se ele ainda não estiver lá
+        if (!privateChats.includes(targetUser)) {
+            setPrivateChats(prev => [...prev, targetUser]);
+        }
+
+        // Define o chat com esse usuário como o chat ativo
+        setActiveChat(targetUser);
+    };
+
     if (!isConnected) return <div>Conectando...</div>;
 
     return (
@@ -117,6 +130,7 @@ function Chat() {
                 activeChat={activeChat}
                 setActiveChat={handleSelectChat}
                 currentUser={currentUser}
+                onUserSelect={handleSelectUser}
             />
             <div className="chat-view">
                 {!isLoggedIn && (

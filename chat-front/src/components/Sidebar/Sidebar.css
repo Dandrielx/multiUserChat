@@ -61,3 +61,12 @@
 .status-indicator.online {
     background-color: #3ba55d;
 }
+
+.user-item.clickable:hover {
+    background-color: #393c43;
+    cursor: pointer;
+}
+
+.status-indicator.private {
+    background-color: #7289da;
+}

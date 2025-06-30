@@ -1,5 +1,5 @@
 import React from 'react';
-import Chat from './components/Chat/Chat'; // Apenas importa o Chat
+import Chat from './components/Chat/Chat';
 import './App.css';
 
 function App() {
@@ -9,7 +9,6 @@ function App() {
         <h1>Multi-User Chat</h1>
       </header>
       <div className="App-main-content">
-        {/* Renderiza o componente Chat diretamente, sem props */}
         <Chat />
       </div>
     </div>

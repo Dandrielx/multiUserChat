@@ -8,7 +8,6 @@
     flex-direction: column;
 }
 
-/* Um contêiner para cada linha de mensagem, para controlar o alinhamento */
 .message-container {
     display: flex;
     margin-bottom: 10px;
@@ -16,15 +15,12 @@
 
 .message-container.sent {
     justify-content: flex-end;
-    /* Alinha o balão à direita */
 }
 
 .message-container.received {
     justify-content: flex-start;
-    /* Alinha o balão à esquerda */
 }
 
-/* O balão da mensagem em si */
 .message-bubble {
     padding: 8px 14px;
     border-radius: 18px;
@@ -34,13 +30,11 @@
 
 .message-sent {
     background-color: #007bff;
-    /* Azul para enviadas */
     color: white;
 }
 
 .message-received {
     background-color: #f1f0f0;
-    /* Cinza para recebidas */
     color: black;
 }
 
