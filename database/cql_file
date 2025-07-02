@@ -1,0 +1,13 @@
+USE test;
+
+CREATE TABLE IF NOT EXISTS users (
+    user_id      UUID PRIMARY KEY,
+    user_name    TEXT,
+    user_email   TEXT,
+    user_password TEXT
+);
+
+USE test;
+
+INSERT INTO users (user_id, user_name, user_email, user_password)
+VALUES (uuid(), 'Test', 'test@gmail.com', '123');

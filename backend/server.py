@@ -2,6 +2,7 @@ import socket
 import threading
 import json
 import time
+import os
 
 # Estruturas principais
 clients = {}  # socket -> username
@@ -121,9 +122,18 @@ def start_server(host='0.0.0.0', port=4242):
     print(f"Servidor de chat rodando em {host}:{port}")
     
     while True:
-        client_socket, addr = server.accept()
+        print("[BACKEND] Waiting for new connection…")
+        try:
+            client_socket, addr = server.accept()
+            print(f"[BACKEND] → Connection accepted from {addr}")
+        except Exception as e:
+            print(f"[BACKEND] ! accept() error:", e)
+            continue
+
         thread = threading.Thread(target=handle_client, args=(client_socket,))
+        thread.daemon = True
         thread.start()
 
 if __name__ == "__main__":
-    start_server()
+    port = int(os.environ.get("PORT", 4242))
+    start_server(port = port)

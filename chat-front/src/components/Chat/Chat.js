@@ -14,6 +14,8 @@ function Chat() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
 
+    const WS_URL = process.env.REACT_APP_WS_URL;
+
     // Ele guarda o valor mais recente do currentUser de uma forma que o useEffect pode acessar.
     const currentUserRef = useRef(currentUser);
     useEffect(() => {
@@ -56,7 +58,10 @@ function Chat() {
         };
 
         websocketService.addMessageListener(handleNewMessage);
-        websocketService.connect("ws://localhost:3001")
+        const match = WS_URL.match(/wss?:\/\/.+/);
+        const connURL = match ? match[0] : "";
+        console.log("Connecting to WS at", connURL);
+        websocketService.connect(connURL)
             .then(() => setIsConnected(true))
             .catch(err => console.error("Falha na conexão WS:", err));
 
@@ -64,7 +69,7 @@ function Chat() {
         return () => {
             websocketService.removeMessageListener(handleNewMessage);
         };
-    }, []);
+    }, [WS_URL]);
 
     const handleSendMessage = (message) => {
         if (!isConnected) return;
