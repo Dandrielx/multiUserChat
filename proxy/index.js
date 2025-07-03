@@ -1,10 +1,12 @@
 const WebSocket = require('ws');
 const net = require('net');
 
-const TCP_HOST = process.env.TCP_HOST;   // muda pra teu host de produção depois
+const TCP_HOST = process.env.TCP_HOST || "localhost";   // muda pra teu host de produção depois
 const TCP_PORT = parseInt(process.env.TCP_PORT, 10) || 4242;
 const WS_PORT = parseInt(process.env.PORT, 10) || 3001;;          // porta pública pro React
-console.log('Funfou');
+
+const TCP_HOST_BACK = process.env.TCP_HOST_BACK || "localhost";   // muda pra teu host de produção depois
+const TCP_PORT_BACK = parseInt(process.env.TCP_PORT_BACK, 10) || 4242;
 
 // Sobe WebSocket server
 const wss = new WebSocket.Server({ port: WS_PORT }, () =>

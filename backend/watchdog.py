@@ -1,9 +1,11 @@
-import socket, subprocess, time, psutil
+import socket, subprocess, time, psutil, os
 
-MAIN_HOST = 'localhost'     # Endereço do servidor principal
-MAIN_PORT = 4242            # Porta do servidor principal
+MAIN_HOST = "localhost"     # Endereço do servidor principal
+MAIN_PORT = int(os.environ.get("PORT", 4242))            # Porta do servidor principal
 BACKUP_PROCESS = None       # Referência pro processo do servidor backup
 pre_state = None            # Estado anterior (pra evitar prints repetidos)
+
+time.sleep(60)
 
 # Verifica se o servidor principal está respondendo
 def is_alive(host, port):
