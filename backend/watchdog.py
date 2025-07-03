@@ -5,7 +5,7 @@ MAIN_PORT = int(os.environ.get("PORT", 4242))            # Porta do servidor pri
 BACKUP_PROCESS = None       # Referência pro processo do servidor backup
 pre_state = None            # Estado anterior (pra evitar prints repetidos)
 
-time.sleep(60)
+time.sleep(10)
 
 # Verifica se o servidor principal está respondendo
 def is_alive(host, port):

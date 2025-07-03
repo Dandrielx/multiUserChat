@@ -10,6 +10,8 @@ usernames = {}  # username -> socket
 client_rooms = {}  # socket -> sala atual
 rooms = {"geral": set(), "games": set(), "estudos": set()}  # salas disponíveis
 
+print(f"[BACKUP SERVER] Starting...")
+
 # Envia a lista atualizada de usuários pra todos os clientes
 def broadcast_user_list():
     user_list_update = {
@@ -119,7 +121,7 @@ def start_server(host='0.0.0.0', port=4242):
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind((host, port))
     server.listen()
-    print(f"Servidor de chat rodando em {host}:{port}")
+    print(f"Servidor backup de chat rodando em {host}:{port}")
     
     while True:
         print("[BACKEND] Waiting for new connection…")
